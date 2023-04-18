@@ -34,7 +34,7 @@ output_matrix = []
 
 bandwidthList = [200, 400, 1000, 4000]
 
-batchSize = 5
+batchSize = 20
 
 def add_table_split():
     table_tag = []
@@ -97,7 +97,7 @@ def printTotalComm(executable_name):
     for scaler in scalerList:
         noPreprocessList.append(getTotalComm(comm_root_path + str("Falsepreprocess_") + str(scaler) + "scaler_" + executable_name + ".comm"))
         hasPreprocessList.append(getTotalComm(comm_root_path + str("Truepreprocess_") + str(scaler) + "scaler_" + executable_name + ".comm"))
-    preprocessList = [(hasPreprocessList[i]-noPreprocessList[i])/5 for i in range(len(noPreprocessList))]
+    preprocessList = [(hasPreprocessList[i]-noPreprocessList[i])/batchSize for i in range(len(noPreprocessList))]
     print([f"{x:.2f}" for x in noPreprocessList])
     print([f"{x:.2f}" for x in preprocessList])
         

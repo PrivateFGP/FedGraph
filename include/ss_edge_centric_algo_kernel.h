@@ -587,6 +587,7 @@ onIteration(Ptr<GraphTileType>& graph, CommSyncType& cs, GraphSummary& gs, const
                 std::vector<Task> taskv;
 
                 auto clientComputeUpdate = [this, &gs, &thc, &clientTaskComm, &taskv, &graph, i, tileIndex](ShareVecVec& updateSrc, ShareVecVec& duplicatedUpdateSvv, const uint32_t dstTid) {
+                    set_up_mpc_channel(true, i);
                     auto t_Scatter_computation = std::chrono::high_resolution_clock::now();
 
                     uint64_t scatterTaskNum = updateSrc.shareVecs.size();
@@ -670,7 +671,8 @@ onIteration(Ptr<GraphTileType>& graph, CommSyncType& cs, GraphSummary& gs, const
                     // }
                     taskv.clear();
 
-                    print_duration(t_premerging, "premerging");                   
+                    print_duration(t_premerging, "premerging");
+                    close_mpc_channel(true, i);                   
                 };
 
                 std::cout<<tileIndex<<" "<<"Begin update extraction mapping with "<<i<<std::endl;
@@ -696,10 +698,12 @@ onIteration(Ptr<GraphTileType>& graph, CommSyncType& cs, GraphSummary& gs, const
                 preprocessId += 1;
                 print_duration(t_premerged_extraction, "premerged_extraction");
 
+                printf("client here\n");
                 Semaphore& local_update_ready_smp = clientTaskComm.getLocalUpdateReadySmp(i);
                 Semaphore& remote_update_ready_smp = serverTaskComm.getRemoteUpdateReadySmp(i);
                 remote_update_ready_smp.release();
                 local_update_ready_smp.acquire();
+                printf("client after\n");
 
                 auto t_Gather_preparation = std::chrono::high_resolution_clock::now();
 
@@ -724,6 +728,7 @@ onIteration(Ptr<GraphTileType>& graph, CommSyncType& cs, GraphSummary& gs, const
                 std::cout<<tileIndex<<" "<<"Begin gather computation mapping with "<<i<<std::endl;
                 // Gather
                 if (i == (tileIndex + 1) % tileNum) {
+                    set_up_mpc_channel(true, i);
                     for (int j=0; j<tileNum; ++j) {
                         uint64_t gatherTaskNum = gs.localVertexSvv.shareVecs.size();
                         if (gatherTaskNum != gs.localUpdateSvvs[j].shareVecs.size()) {
@@ -753,7 +758,8 @@ onIteration(Ptr<GraphTileType>& graph, CommSyncType& cs, GraphSummary& gs, const
                         //     for (uint64_t m=0; m<gatherTaskNum; ++m) {
                         //         std::cout<<"2Here "<<m<<" "<<gs.localVertexPos[m]<<" "<<gs.localVertexSvv.shareVecs[m].shares[0]<<" "<<gs.localVertexSvv.shareVecs[m].shares[1]<<" "<<gs.isGatherDstVertexDummy[j][m]<<std::endl;
                         //     }
-                    }                    
+                    }
+                    close_mpc_channel(true, i);                    
                 }
 
                 print_duration(t_Gather_computation, "Gather_computation");
@@ -809,6 +815,7 @@ void SSEdgeCentricAlgoKernel<GraphTileType>::runAlgoKernelServer(std::vector<std
                     // }
 
                     auto serverComputeUpdate = [this, &gs, &thc, &serverTaskComm, &taskv, i, tileIndex](ShareVecVec& updateSrc, ShareVecVec& duplicatedUpdateSvv) {
+                        set_up_mpc_channel(false, i);
                         // Scatter
                         thc.rotation = 0;
                         uint64_t scatterTaskNum = updateSrc.shareVecs.size();
@@ -882,6 +889,7 @@ void SSEdgeCentricAlgoKernel<GraphTileType>::runAlgoKernelServer(std::vector<std
                         // }
 
                         taskv.clear();
+                        close_mpc_channel(false, i);
                     };
 
                     ShareVecVec duplicatedUpdateSvv;
@@ -899,10 +907,14 @@ void SSEdgeCentricAlgoKernel<GraphTileType>::runAlgoKernelServer(std::vector<std
                                         iter, preprocessId, i);
                     preprocessId += 1;
 
+                    printf("Server here\n");
+
                     Semaphore& local_update_ready_smp = clientTaskComm.getLocalUpdateReadySmp(i);
                     Semaphore& remote_update_ready_smp = serverTaskComm.getRemoteUpdateReadySmp(i);
                     local_update_ready_smp.release();
                     remote_update_ready_smp.acquire();
+
+                    printf("server after\n");
 
                     ShareVecVec tmpUpdateSvv;
                     server_oblivious_mapper_online(gs.remoteUpdateSvvs[i], tmpUpdateSvv,
@@ -943,6 +955,7 @@ void SSEdgeCentricAlgoKernel<GraphTileType>::runAlgoKernelServer(std::vector<std
                         cs.recvShareVecVec(gs.remoteVertexSvvs[i], (i + 1) % tileNum, tileIndex);
                     } else {
                         std::cout<<"Compute Gather Taskv, "<<tileIndex<<" Server, "<<"iter: "<<iter<<" "<<i<<std::endl;
+                        set_up_mpc_channel(false, i);
                         for (int j=0; j<tileNum; ++j) {
                             uint64_t gatherTaskNum = remoteUpdateSvvs[j].shareVecs.size();
                             if (gatherTaskNum != gs.remoteVertexSvvs[i].shareVecs.size()) {
@@ -986,6 +999,7 @@ void SSEdgeCentricAlgoKernel<GraphTileType>::runAlgoKernelServer(std::vector<std
                                 cs.sendShareVecVec(gs.remoteVertexSvvs[i], tileIndex, j);
                             }
                         }
+                        close_mpc_channel(false, i);
                     }
 
                     barrier.wait();

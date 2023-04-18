@@ -1,9 +1,9 @@
 import numpy as np
 from statistics import mean
 
-durationTags = ["preprocess", "preprocess_OM", "iteration", "Scatter" ,"Scatter_preparation", 
+durationTags = ["preprocess", "iteration", "preprocess_OM", "Scatter" ,"Scatter_preparation", 
                     "Scatter_computation", "Gather", "premerging", "premerged_extraction", "Gather_preparation", "Gather_computation"]
-breakDownTableHeader = ["Preprocess", "OM Preprocess", "Online Iteration", "Scatter" ,"Scatter Preparation", 
+breakDownTableHeader = ["Preprocess", "Online Iteration", "OM Preprocess", "Scatter" ,"Scatter Preparation", 
                     "Scatter Computation", "Gather", "Pre-merging", "Pre-merged Extraction", "Gather Preparation", "Gather Computation"]
 
 log_root_path = "./log/"
@@ -20,7 +20,7 @@ defaultScaler=0.2
 plainNumList = [2,1]
 keySize = 3072
 # batchSize = [keySize/(x*65) for x in plainNumList]
-batchSize = [20,20]
+batchSize = [5,5]
 
 
 output_matrix = []
@@ -88,7 +88,7 @@ def print_scale_table(executable_name, cur_bandwidth, cur_latency):
     add_table_split()
     root_setting = "graph_scale"
     # scalerList = [1, 2, 5, 10]
-    scalerList = [0.05, 0.2, 0.5, 1]
+    scalerList = [1]
     log_path = log_root_path + "graph_scale/"
     for scaler in scalerList:
         i = 0
@@ -112,7 +112,6 @@ def print_scale_bandwidth_table(executable_name):
         for bandwidth in bandwidthList:
             eval_setting = root_setting+"_"+executable_name+"_"+str(scaler)+"scale_"+str(defaultNumParts)+"p_"+str(defaultInterRatio)+"inter"+"_"+str(bandwidth)+"b_"+str(defaultLatency)+"l"+"_online"
             log_f_name = log_path+eval_setting+"_"+str(i)+".log"
-            # print(log_f_name)
             durationRow = getDurationRow(log_f_name, isOnline=True)
             row.append(durationRow[durationTags.index("iteration")])
         row = [str(scaler)] + row
@@ -212,7 +211,6 @@ def print_rotation_based_duration_table(executable_name):
         row = []
         eval_setting = root_setting+"_"+"rotation_based_"+executable_name+"_"+str(scaler)+"scale_"+str(defaultNumParts)+"p_"+str(defaultInterRatio)+"inter"+"_"+str(defaultBandWidth)+"b_"+str(defaultLatency)+"l"+"_online"
         log_f_name = log_path+eval_setting+"_"+str(i)+".log"
-        # print(log_f_name)
         durationRow = getDurationRow(log_f_name, isOnline=True)
         row.append(durationRow[durationTags.index("premerging")])
         row.append(durationRow[durationTags.index("iteration")])
@@ -231,29 +229,28 @@ for executable in executableList:
     # print_inter_edge_ratio(executable)
     print_scale_table(executable, defaultBandWidth, defaultLatency)
 
-print(">>>> Scale Bandwidth Figure")
-# Executbale Scale Bandwidth
-for executable in executableList:
-    print_scale_bandwidth_table(executable)
+# print(">>>> Scale Bandwidth Figure")
+# # Executbale Scale Bandwidth
+# for executable in executableList:
+#     print_scale_bandwidth_table(executable)
 
-print(">>>> Inter-Ratio Bandwidth Figure")
-# Executbale inter-ratio Bandwidth
-for executable in executableList:
-    print_inter_ratio_bandwidth(executable)
+# print(">>>> Inter-Ratio Bandwidth Figure")
+# # Executbale inter-ratio Bandwidth
+# for executable in executableList:
+#     print_inter_ratio_bandwidth(executable)
 
-print(">>>> Party Num Figure")
-# Executable party num bandwidth
-for executable in executableList:
-    print_party_num_bandwidth(executable)
+# print(">>>> Party Num Figure")
+# # Executable party num bandwidth
+# for executable in executableList:
+#     print_party_num_bandwidth(executable)
 
 # print(">>>> Latency Figure")
 # # Executable party num bandwidth
 # for executable in executableList:
 #     print_latency_bandwidth(executable)
 
-print(">>>> Round-Halved Duration Table")
-print_round_halved_duration_table(defaultExecutable)
+# print(">>>> Round-Halved Duration Table")
+# print_round_halved_duration_table(defaultExecutable)
 
-print(">>>> Shift-Based Duration Table")
-print_rotation_based_duration_table(defaultExecutable)
-
+# print(">>>> Shift-Based Duration Table")
+# print_rotation_based_duration_table(defaultExecutable)
