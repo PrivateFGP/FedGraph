@@ -283,92 +283,92 @@ def run_latency(executable, executable_path, cur_bandwidth, cur_latency):
 defaultExecutable = "sssp-ss"
 executableList = ["sssp-ss", "pagerank-ss"]
 
-executableList = ["pagerank-ss"]
-bandwidthList = [4000]
+# executableList = ["pagerank-ss"]
+# bandwidthList = [4000]
 
-# print(">>>> Breakdown Table")
-# # Table 1
-# doPreprocess = True
-# cur_bandwidth = defaultBandWidth
-# cur_latency = defaultLatency
-# if isCluster:
-#     setup_network(cur_bandwidth, cur_latency)
-#     # exit()
-# for executable in executableList:
-#     executable_path = executable_root_path + executable
-#     run_graph_scale(executable, executable_path, cur_bandwidth, cur_latency)
-# if isCluster:
-#     clean_network()
+print(">>>> Breakdown Table")
+# Table 1
+doPreprocess = True
+cur_bandwidth = defaultBandWidth
+cur_latency = defaultLatency
+if isCluster:
+    setup_network(cur_bandwidth, cur_latency)
+    # exit()
+for executable in executableList:
+    executable_path = executable_root_path + executable
+    run_graph_scale(executable, executable_path, cur_bandwidth, cur_latency)
+if isCluster:
+    clean_network()
 
 # bandwidthList = [400, 1000, 4000]
 
-# print(">>>> scale-bandwidth")
-# # Figure 1 and Table 1
-# doPreprocess = False
-# cur_latency = defaultLatency
-# for cur_bandwidth in bandwidthList:
-#     if isCluster:
-#         setup_network(cur_bandwidth, cur_latency)
-#     for executable in executableList:
-#         executable_path = executable_root_path + executable
-#         run_graph_scale(executable, executable_path, cur_bandwidth, cur_latency)
-#     if isCluster:
-#         clean_network()
+print(">>>> scale-bandwidth")
+# Figure 1 and Table 1
+doPreprocess = False
+cur_latency = defaultLatency
+for cur_bandwidth in bandwidthList:
+    if isCluster:
+        setup_network(cur_bandwidth, cur_latency)
+    for executable in executableList:
+        executable_path = executable_root_path + executable
+        run_graph_scale(executable, executable_path, cur_bandwidth, cur_latency)
+    if isCluster:
+        clean_network()
 
 # executableList = ["pagerank-ss"]
-# print(">>>> inter-ratio-bandwidth")
-# # Figure 2
-# doPreprocess = True
-# cur_bandwidth = defaultBandWidth
-# cur_latency = defaultLatency
-# if isCluster:
-#     setup_network(cur_bandwidth, cur_latency)
-# for executable in executableList:
-#     executable_path = executable_root_path + executable
-#     run_inter_ratio(executable, executable_path, cur_bandwidth, cur_latency)
-# if isCluster:
-#     clean_network()
+print(">>>> inter-ratio-bandwidth")
+# Figure 2
+doPreprocess = True
+cur_bandwidth = defaultBandWidth
+cur_latency = defaultLatency
+if isCluster:
+    setup_network(cur_bandwidth, cur_latency)
+for executable in executableList:
+    executable_path = executable_root_path + executable
+    run_inter_ratio(executable, executable_path, cur_bandwidth, cur_latency)
+if isCluster:
+    clean_network()
 
 # executableList = ["pagerank-ss"]
 # bandwidthList = [400]
-# doPreprocess = False
-# cur_latency = defaultLatency
-# for cur_bandwidth in bandwidthList:
-#     if isCluster:
-#         setup_network(cur_bandwidth, cur_latency)
-#     for executable in executableList:
-#         executable_path = executable_root_path + executable
-#         run_inter_ratio(executable, executable_path, cur_bandwidth, cur_latency)
-#     if isCluster:
-#         clean_network()
+doPreprocess = False
+cur_latency = defaultLatency
+for cur_bandwidth in bandwidthList:
+    if isCluster:
+        setup_network(cur_bandwidth, cur_latency)
+    for executable in executableList:
+        executable_path = executable_root_path + executable
+        run_inter_ratio(executable, executable_path, cur_bandwidth, cur_latency)
+    if isCluster:
+        clean_network()
 
 # bandwidthList = [200, 400]
-# print(">>>> party-num-bandwidth")
-# # Figure 3
-# doPreprocess = True
-# cur_bandwidth = defaultBandWidth
-# cur_latency = defaultLatency
-# if isCluster:
-#     setup_network(cur_bandwidth, cur_latency)
-# for executable in executableList:
-#     executable_path = executable_root_path + executable
-#     run_party_num(executable, executable_path, cur_bandwidth, cur_latency)
-# if isCluster:
-#     clean_network()
+print(">>>> party-num-bandwidth")
+# Figure 3
+doPreprocess = True
+cur_bandwidth = defaultBandWidth
+cur_latency = defaultLatency
+if isCluster:
+    setup_network(cur_bandwidth, cur_latency)
+for executable in executableList:
+    executable_path = executable_root_path + executable
+    run_party_num(executable, executable_path, cur_bandwidth, cur_latency)
+if isCluster:
+    clean_network()
 
 # bandwidthList = [1000]
 # executableList = ["pagerank-ss"]
 
-# doPreprocess = False
-# cur_latency = defaultLatency
-# for cur_bandwidth in bandwidthList:
-#     if isCluster:
-#         setup_network(cur_bandwidth, cur_latency)
-#     for executable in executableList:
-#         executable_path = executable_root_path + executable
-#         run_party_num(executable, executable_path, cur_bandwidth, cur_latency)
-#     if isCluster:
-#         clean_network()
+doPreprocess = False
+cur_latency = defaultLatency
+for cur_bandwidth in bandwidthList:
+    if isCluster:
+        setup_network(cur_bandwidth, cur_latency)
+    for executable in executableList:
+        executable_path = executable_root_path + executable
+        run_party_num(executable, executable_path, cur_bandwidth, cur_latency)
+    if isCluster:
+        clean_network()
 
 # # print(">>>> latency-bandwidth")
 # # # Figure 4
@@ -426,17 +426,17 @@ bandwidthList = [4000]
 print(">>>> diff rotation-based and round-halved")
 # rotation-based vs round-halved
 
-# doPreprocess = True
-# cur_bandwidth = defaultBandWidth
-# cur_latency = defaultLatency
-# if isCluster:
-#     setup_network(cur_bandwidth, cur_latency)
+doPreprocess = True
+cur_bandwidth = defaultBandWidth
+cur_latency = defaultLatency
+if isCluster:
+    setup_network(cur_bandwidth, cur_latency)
 
-# executable_path = executable_root_path + defaultExecutable
-# run_rotation_based(defaultExecutable, executable_path, defaultBandWidth, defaultLatency)
+executable_path = executable_root_path + defaultExecutable
+run_rotation_based(defaultExecutable, executable_path, defaultBandWidth, defaultLatency)
 
-# if isCluster:
-#     clean_network()
+if isCluster:
+    clean_network()
 
 doPreprocess = False
 cur_bandwidth = defaultBandWidth
